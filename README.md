@@ -10,22 +10,35 @@ import ipaddress
 import random
 
 
-def generate_ipv4_ips(cidr_network):
-    """ 生成 IPv4 CIDR 范围内的所有IP地址 """
+def generate_ipv4_ips(ip_range):
+    """
+    传入一个IPv4的CIDR，生成CIDR范围内的所有IP地址，以列表的形式返回
+    args:
+        ip_range: 传入一个IPv4的CIDR
+    return 返回生成的列表或空列表
+    """
     try:
-        ip_network = ipaddress.ip_network(cidr_network)
-        return [str(ip) for ip in ip_network.hosts()]
-    except ValueError as e:
+        ip_addresses = ipaddress.ip_network(ip_range)
+        return [str(ip) for ip in ip_addresses.hosts()]
+    except ValueError:
         return []
 
 
-def generate_ipv6_ips(cidr_ip, num_ips):
-    """生成IPv6 CIDR 范围内，随机num_ips个IP地址"""
+def generate_ipv6_ips(ip_range, generation_number):
+    """
+    传入一个IPv6的CIDR，随机生成指定数量的IP地址，以列表的形式返回
+    args:
+        ip_range: 传入个IPv6的CIDR
+        generation_number: 要生成的IP数量
+    return 返回生成的列表或空列表
+    """
     try:
-        network = ipaddress.IPv6Network(cidr_ip, strict=False)
-        return [str(ipaddress.IPv6Address(random.randint(int(network.network_address), int(network.broadcast_address))))
-                for _ in range(num_ips)]
-    except ValueError as e:
+        ip_networks = ipaddress.IPv6Network(ip_range, strict=False)
+        return [str(ipaddress.IPv6Address(
+            random.randint(int(ip_networks.network_address),
+                           int(ip_networks.broadcast_address))))
+            for _ in range(generation_number)]
+    except ValueError:
         return []
 
 
@@ -33,6 +46,7 @@ if __name__ == '__main__':
     # 生成IPv4地址
     ipv4_address1 = generate_ipv4_ips('192.168.1.0/24')
     print(ipv4_address1)
+    
     ipv4_address2 = generate_ipv4_ips("120.253.240.192/26")
     print(ipv4_address2)
 
@@ -52,7 +66,6 @@ if __name__ == '__main__':
 
     ipv6_address5 = generate_ipv6_ips('2001:db8::/125', 100)
     print(ipv6_address5)
-
 ```
 
 ### 输出生成的IP地址
